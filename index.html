@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <script
+      src="https://kit.fontawesome.com/b1259ff4a4.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://app.secureprivacy.ai/script/606acb2d5761b5f013b48067.js"
+    ></script>
+    <script src="js/index.js"></script>
+    <title>Sorting Algorithm Visualize</title>
+  </head>
+  <body>
+    <main class="container">
+      <div class="box box-main">
+        <header class="box-top">
+          <button class="btn btn-merge-sort">Merge Sort</button>
+          <button class="btn">Quick Sort</button>
+          <button class="btn">Bubble Sort</button>
+          <button><i class="fa fa-gear"></i></button>
+        </header>
+        <section class="box box-result">
+          <header class="box-top">
+            <i class="fa fa-times"></i>
+          </header>
+          <section class="box-main">
+            <div class="box-row">
+              <label>Array Size:</label>
+              <output class="result-outPut">0</output>
+            </div>
+            <div class="box-row">
+              <label>Animation Speed:</label>
+              <output class="result-outPut">0</output>
+            </div>
+            <div class="box-row">
+              <label>Metod:</label>
+              <output class="result-outPut">MergeSort</output>
+            </div>
+            <div class="box-row">
+              <label>Time:</label>
+              <output class="result-outPut">MergeSort</output>
+            </div>
+          </section>
+        </section>
+        <section class="bars-container"></section>
+      </div>
+      <div class="box box-bottom">
+        <button class="item inactive btn-generate-array">Scramble</button>
+        <div class="item">
+          <input
+            min="0"
+            max="1000"
+            type="range"
+            class="array-range range item"
+          />
+          <output class="text-muted p-data-range-value">0</output>
+        </div>
+        <div class="inactive">
+          <input type="checkbox" class="ml-3 mr-1" />
+          <label for="checkbox">Animate</label>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

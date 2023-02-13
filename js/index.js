@@ -1,7 +1,7 @@
 class App {
   init() {
     this.arr = []
-    this.barContainer = document.querySelector('.bars')
+    this.barContainer = document.querySelector('.bars-container')
     this.arrayRange = document.querySelector('.array-range')
     this.btnMergeSort = document.querySelector('.btn-merge-sort')
     this.pDataRangeValue = document.querySelector('.p-data-range-value')
@@ -18,6 +18,7 @@ class App {
   }
   configureAll() {
     this.arrayRange.addEventListener('input', this._onRangeChange)
+    this.arrayRange.addEventListener('mouseup', this._tooManyBars)
     this.btnMergeSort.addEventListener('click', this._onOrderByMerge)
     this.btnGenerateArray.addEventListener('click', this._onGenerateNewArray)
   }
@@ -25,33 +26,73 @@ class App {
     return Array.from({ length }, () => Math.floor(Math.random() * 100))
   }
 
-  generateBars(arr) {
+  displayBars() {
     this.barContainer.innerHTML = ''
-    arr.forEach((item) => {
-      const bar = document.createElement('div')
-      bar.classList.add('bg-danger')
-      bar.classList.add('flex-grow-1')
-      bar.classList.add('border')
-      bar.classList.add('border-warning')
-      bar.style.height = `${item}px`
-      bar.style.width = `3px`
-      // bar.dataset.index = i
+    this.bars.forEach((bar) => {
       this.barContainer.appendChild(bar)
     })
   }
 
-  _mergeSort = (arr) => {
+  makeBars() {
+    const length = this.arrayRange.value
+    if (!length) throw new Error('Range is empty')
+    this.bars = Array.from({ length }, (_, index) => {
+      const bar = document.createElement('div')
+      bar.classList.add('bar')
+      const value = Math.floor(Math.random() * 100)
+      bar.style.height = `${value}px`
+      bar.dataset.originalPosition = index
+      return bar
+    })
+  }
+
+  generateBars(arr) {
+    this.barContainer.innerHTML = ''
+    arr.forEach((item) => {
+      const bar = document.createElement('div')
+      bar.classList.add('bar')
+      bar.style.height = `${item}px`
+      this.barContainer.appendChild(bar)
+    })
+  }
+
+  _getElementValue = (element, value = 'height') => {
+    let val = 0
+    if (value === 'height') val = element.style[value].slice(0, -2)
+    if (value.startsWith('data')) val = element.dataset[value.slice(4)]
+
+    return Number(val)
+  }
+  _mergeSort = async (arr) => {
+    this.displayBars()
     if (arr.length <= 1) return arr
     const mid = Math.floor(arr.length / 2)
-    const left = this._mergeSort(arr.slice(0, mid))
-    const right = this._mergeSort(arr.slice(mid))
-    return this._merge(left, right)
+    const left = await this._mergeSort(arr.slice(0, mid))
+    const right = await this._mergeSort(arr.slice(mid))
+
+    return new Promise((resolve) => {
+      const comp = this._merge(left, right)
+
+      setTimeout(() => {
+        this.bars = comp
+
+        resolve(comp)
+      }, 100)
+    })
   }
-  _onOrderByMerge = () => {
-    this.arr = this._mergeSort(this.arr)
-    this.generateBars(this.arr)
+  _onOrderByMerge = async () => {
+    try {
+      this.bars = await this._mergeSort(this.bars)
+      // console.log(this.bars)
+      this.displayBars()
+    } catch (error) {
+      // console.log(error)
+    }
+    // this.generateBars(this.arr)
   }
   _onRangeChange = (e) => {
+    this.makeBars()
+    this.displayBars()
     if (e.target.value <= 0) this._disableAllBtns(true)
     else this._disableAllBtns(false)
     this.pDataRangeValue.innerText = `${this.arrayRange.value} Bars`
@@ -68,10 +109,16 @@ class App {
     let pointer1 = 0
     let pointer2 = 0
     while (pointer1 < arr1.length && pointer2 < arr2.length) {
-      // compare arr1[pointer1] and arr2[pointer2]
-      if (arr1[pointer1] <= arr2[pointer2]) {
-        // onTouch(pointer1)
-        sortedArray.push(arr1[pointer1])
+      if (
+        this._getElementValue(arr1[pointer1]) <=
+        this._getElementValue(arr2[pointer2])
+      ) {
+        const element = arr1[pointer1]
+        element.classList.add('selected')
+        setTimeout(() => {
+          element.classList.remove('selected')
+        }, this._getElementValue(element, 'dataoriginalPosition'))
+        sortedArray.push(element)
         pointer1++
       } else {
         sortedArray.push(arr2[pointer2])
@@ -93,6 +140,12 @@ class App {
   }
   _disableAllBtns = (state) => {
     this.allBtns.forEach((btn) => (btn.disabled = state))
+  }
+
+  _tooManyBars = (e) => {
+    document.querySelectorAll('.inactive').forEach((element) => {
+      element.classList.remove('inactive')
+    })
   }
 }
 
